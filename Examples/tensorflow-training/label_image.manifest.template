@@ -119,10 +119,11 @@ sgx.trusted_files.libnssmyhostname = "file:$(ARCH_LIBDIR)/libnss_myhostname.so.2
 sgx.trusted_files.libnssmdns = "file:$(ARCH_LIBDIR)/libnss_mdns4_minimal.so.2"
 
 # The script to run
-sgx.trusted_files.script = "file:label_image/label_image.py"
+#sgx.trusted_files.script = "file:label_image/label_image.py"
+sgx.trusted_files.script = "file:model/lr.py"
 
 # required by Python package ctypes (lib/python3.6/lib-dynload/ctypes.cpython-36m-x86_64-linux-gnu.so)
-# Ubuntu18.04 sgx.trusted_files.libffi = "file:/usr/$(ARCH_LIBDIR)/libffi.so.6"
+sgx.trusted_files.libffi = "file:/usr/$(ARCH_LIBDIR)/libffi.so.6"
 
 # File containing the classes, i.e., things the classifier has been trained to distinguish between
 #sgx.trusted_files.classes = "file:classes.txt"
@@ -139,7 +140,7 @@ sgx.trusted_files.script = "file:label_image/label_image.py"
 
 # Scratch space
 sgx.allowed_files.tmp = "file:/tmp"
-sgx.allowed_files.tensorflow = "file:label_image"
+sgx.allowed_files.tensorflow = "file:model"
 
 # Various locations where Python dependencies are found
 sgx.allowed_files.python3 = "file:/usr/lib/python3"
