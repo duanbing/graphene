@@ -56,15 +56,15 @@ label_image.manifest.sgx: label_image.manifest
 
 .PHONY: check
 check: all
-	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/lr.py 
+	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/monitored_training_session.py 
 
 .PHONY: run-native
 run-native: all
-	python3 model/lr.py
+	python3 model/monitored_training_session.py
 
 .PHONY: run-graphene
 run-graphene: all
-	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/lr.py 
+	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/monitored_training_session.py
 	#GDB=1 $(GRAPHENEDIR)/Runtime/pal_loader label_image 
 
 .PHONY: clean
