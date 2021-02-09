@@ -42,7 +42,7 @@ fs.mount.etc.uri = "file:/etc"
 # Workload needs to create temporary files
 fs.mount.tmp.type = "chroot"
 fs.mount.tmp.path = "/tmp"
-fs.mount.tmp.uri = "file:/tmp"
+fs.mount.tmp.uri = "file:/tmp/mytmp"
 
 # PyTorch loads its pre-trained models from here
 # Uncomment lines below if you want to use torchvision.model.alexnet(pretrained=True)
@@ -120,7 +120,7 @@ sgx.trusted_files.libnssmdns = "file:$(ARCH_LIBDIR)/libnss_mdns4_minimal.so.2"
 
 # The script to run
 #sgx.trusted_files.script = "file:label_image/label_image.py"
-sgx.trusted_files.script = "file:model/monitored_training_session.py"
+sgx.trusted_files.script = "file:model/lr.py"
 
 # required by Python package ctypes (lib/python3.6/lib-dynload/ctypes.cpython-36m-x86_64-linux-gnu.so)
 sgx.trusted_files.libffi = "file:/usr/$(ARCH_LIBDIR)/libffi.so.6"
@@ -139,8 +139,8 @@ sgx.trusted_files.libffi = "file:/usr/$(ARCH_LIBDIR)/libffi.so.6"
 #sgx.trusted_files.model = "file:alexnet-pretrained.pt"
 
 # Scratch space
-sgx.allowed_files.tmp = "file:/tmp"
-sgx.allowed_files.tensorflow = "file:model"
+sgx.allowed_files.tmp = "file:/tmp/mytmp"
+sgx.allowed_files.model = "file:model"
 
 # Various locations where Python dependencies are found
 sgx.allowed_files.python3 = "file:/usr/lib/python3"

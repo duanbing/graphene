@@ -13,8 +13,8 @@ else
 GRAPHENE_LOG_LEVEL = error
 endif
 
-GIT_COMMIT ?= v1.9.0
-TAR_SHA256 ?= ffc3151b06823d57b4a408261ba8efe53601563dfe93af0866751d4f6ca5068c
+#GIT_COMMIT ?= v1.9.0
+#TAR_SHA256 ?= ffc3151b06823d57b4a408261ba8efe53601563dfe93af0866751d4f6ca5068c
 
 .PHONY: all
 all: label_image.manifest
@@ -56,15 +56,15 @@ label_image.manifest.sgx: label_image.manifest
 
 .PHONY: check
 check: all
-	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/monitored_training_session.py 
+	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/lr.py 
 
 .PHONY: run-native
 run-native: all
-	python3 model/monitored_training_session.py
+	python3 model/lr.py
 
 .PHONY: run-graphene
 run-graphene: all
-	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/monitored_training_session.py
+	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/lr.py
 	#GDB=1 $(GRAPHENEDIR)/Runtime/pal_loader label_image 
 
 .PHONY: clean
