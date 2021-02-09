@@ -6,7 +6,9 @@ conda create --name py36 python=3.6
 conda activate py36
 ```
 
-Test:
+### Run
+
+#### Sample
 ```
 pip install --user numpy==1.18.5 tensorflow==v1.15.2 wrapt keras_applications keras_preprocessing
 
@@ -15,8 +17,12 @@ make SGX=1 run-graphene
 
 ```
 
-### Run
+#### Distributed Training
 
+Train a LR model in 2 PS' and 2 workers network. Execute each command below in a single termial.
 ```
-make SGX=1 DEBUG=1 run-graphene
+make clean && make SGX=1 distclean && make SGX=1 run-graphene-ps0
+make clean && make SGX=1 distclean && make SGX=1 run-graphene-ps1
+make clean && make SGX=1 distclean && make SGX=1 run-graphene-w0
+make clean && make SGX=1 distclean && make SGX=1 run-graphene-w1
 ```

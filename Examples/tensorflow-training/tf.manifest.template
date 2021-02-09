@@ -119,8 +119,8 @@ sgx.trusted_files.libnssmyhostname = "file:$(ARCH_LIBDIR)/libnss_myhostname.so.2
 sgx.trusted_files.libnssmdns = "file:$(ARCH_LIBDIR)/libnss_mdns4_minimal.so.2"
 
 # The script to run
-#sgx.trusted_files.script = "file:label_image/label_image.py"
-sgx.trusted_files.script = "file:model/lr.py"
+#sgx.trusted_files.script = "file:tf/tf.py"
+sgx.trusted_files.script = "file:model/end-2-end/train.py"
 
 # required by Python package ctypes (lib/python3.6/lib-dynload/ctypes.cpython-36m-x86_64-linux-gnu.so)
 sgx.trusted_files.libffi = "file:/usr/$(ARCH_LIBDIR)/libffi.so.6"

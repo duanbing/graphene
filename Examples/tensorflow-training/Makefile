@@ -1,9 +1,8 @@
-manifests = $(addsuffix .manifest,label_image)
+manifests = $(addsuffix .manifest,tf)
 exec_target = $(manifests)
 
 GRAPHENEDIR ?= ../..
 SGX_SIGNER_KEY ?= $(GRAPHENEDIR)/Pal/src/host/Linux-SGX/signer/enclave-key.pem
-TF_DIR ?= tensorflow
 
 PYTHON3 ?= /usr/bin/python3
 
@@ -17,18 +16,12 @@ endif
 #TAR_SHA256 ?= ffc3151b06823d57b4a408261ba8efe53601563dfe93af0866751d4f6ca5068c
 
 .PHONY: all
-all: label_image.manifest
+all: tf.manifest
 ifeq ($(SGX),1)
-all: label_image.manifest.sgx label_image.sig label_image.token
+all: tf.manifest.sgx tf.sig tf.token
 endif
 
 include ../../Scripts/Makefile.configs
-
-INCEPTION_HASH=b1a1f91276e48a9ddf0cb0d854f044ebfbf985dc2c2cedceb52b3d668894299a
-inception_v3.tflite:
-	$(GRAPHENEDIR)/Scripts/download --output inception_v3_2018_04_27.tgz --sha256 $(INCEPTION_HASH)\
-	       --url https://storage.googleapis.com/download.tensorflow.org/models/tflite/model_zoo/upload_20180427/inception_v3_2018_04_27.tgz
-	tar xfz inception_v3_2018_04_27.tgz
 
 $(GRAPHENEDIR)/Runtime/libgcc_s.so.1:
 	cp $(ARCH_LIBDIR)/libgcc_s.so.1 $@
@@ -36,9 +29,9 @@ $(GRAPHENEDIR)/Runtime/libgcc_s.so.1:
 $(GRAPHENEDIR)/Runtime/libstdc++.so.6:
 	cp /usr/$(ARCH_LIBDIR)/libstdc++.so.6 $@
 
-#label_image.manifest: libtensorflow_framework.so label_image inception_v3.tflite labels.txt image.bmp
-label_image.manifest: $(GRAPHENEDIR)/Runtime/libgcc_s.so.1 $(GRAPHENEDIR)/Runtime/libstdc++.so.6
-label_image.manifest: label_image.manifest.template
+#tf.manifest: libtensorflow_framework.so tf inception_v3.tflite labels.txt tf.bmp
+tf.manifest: $(GRAPHENEDIR)/Runtime/libgcc_s.so.1 $(GRAPHENEDIR)/Runtime/libstdc++.so.6
+tf.manifest: tf.manifest.template
 	sed -e 's|$$(GRAPHENEDIR)|'"$(GRAPHENEDIR)"'|g' \
 		-e 's|$$(GRAPHENE_LOG_LEVEL)|'"$(GRAPHENE_LOG_LEVEL)"'|g' \
 		-e 's|$$(PYTHON3)|'"$(PYTHON3)"'|g' \
@@ -46,17 +39,17 @@ label_image.manifest: label_image.manifest.template
 		-e 's|$$(HOME)|'"$(HOME)"'|g' \
 		$< > $@
 
-label_image.manifest.sgx: label_image.manifest
+tf.manifest.sgx: tf.manifest
 	$(GRAPHENEDIR)/Pal/src/host/Linux-SGX/signer/pal-sgx-sign \
 		-libpal $(GRAPHENEDIR)/Runtime/libpal-Linux-SGX.so \
 		-key $(SGX_SIGNER_KEY) \
 		-manifest $< -output $@
 	$(GRAPHENEDIR)/Pal/src/host/Linux-SGX/signer/pal-sgx-get-token \
-		-output label_image.token -sig label_image.sig
+		-output tf.token -sig tf.sig
 
 .PHONY: check
 check: all
-	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/lr.py 
+	$(GRAPHENEDIR)/Runtime/pal_loader tf  model/end-2-end/train.py --task_index=0 --job_name=ps 
 
 .PHONY: run-native
 run-native: all
@@ -64,17 +57,31 @@ run-native: all
 
 .PHONY: run-graphene
 run-graphene: all
-	$(GRAPHENEDIR)/Runtime/pal_loader label_image model/lr.py
-	#GDB=1 $(GRAPHENEDIR)/Runtime/pal_loader label_image 
+	$(GRAPHENEDIR)/Runtime/pal_loader tf model/lr.py
+
+.PHONY: run-graphene-ps0
+run-graphene-ps0: all
+	$(GRAPHENEDIR)/Runtime/pal_loader tf model/end-2-end/train.py --task_index=0 --job_name=ps 
+
+.PHONY: run-graphene-ps1
+run-graphene-ps1: all
+	$(GRAPHENEDIR)/Runtime/pal_loader tf model/end-2-end/train.py --task_index=1 --job_name=ps 
+
+.PHONY: run-graphene-w0
+run-graphene-w0: all
+	$(GRAPHENEDIR)/Runtime/pal_loader tf model/end-2-end/train.py --task_index=0 --job_name=worker
+
+.PHONY: run-graphene-w1
+run-graphene-w1: all
+	$(GRAPHENEDIR)/Runtime/pal_loader tf model/end-2-end/train.py --task_index=1 --job_name=worker
 
 .PHONY: clean
 clean:
-	$(RM) label_image.manifest label_image.manifest.sgx label_image.sig label_image.token
+	$(RM) tf.manifest tf.manifest.sgx tf.sig tf.token
 
 .PHONY: distclean
 distclean: clean
-	#$(RM) -r label_image
-	$(RM) inception_v3_2018_04_27.tgz inception_v3.pb inception_v3.tflite labels.txt image.bmp
+	#$(RM) -r tf
 	$(RM) -r tensorflow.tar.gz libtensorflow_framework.so bazel-*-installer-linux-*.sh
 
 BAZEL_INSTALLER_HASH=17ab70344645359fd4178002f367885e9019ae7507c9c1ade8220f3628383444
