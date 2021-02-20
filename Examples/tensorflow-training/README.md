@@ -54,6 +54,7 @@ export SGX_SIGNER_KEY=$PWD/enclave-key.pem
 
 #### Eager Mode 
 ```
+cd Examples/tensorflow-training
 make distclean && make SGX=1 distclean
 make SGX=1 run-graphene
 ```
