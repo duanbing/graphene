@@ -42,7 +42,7 @@ fs.mount.etc.uri = "file:/etc"
 # Workload needs to create temporary files
 fs.mount.tmp.type = "chroot"
 fs.mount.tmp.path = "/tmp"
-fs.mount.tmp.uri = "file:/tmp/mytmp"
+fs.mount.tmp.uri = "file:/tmp"
 
 # PyTorch loads its pre-trained models from here
 # Uncomment lines below if you want to use torchvision.model.alexnet(pretrained=True)
@@ -139,17 +139,15 @@ sgx.trusted_files.libffi = "file:/usr/$(ARCH_LIBDIR)/libffi.so.6"
 #sgx.trusted_files.model = "file:alexnet-pretrained.pt"
 
 # Scratch space
-sgx.allowed_files.tmp = "file:/tmp/mytmp"
+sgx.allowed_files.tmp = "file:/tmp"
 sgx.allowed_files.model = "file:model"
 
 # Various locations where Python dependencies are found
 sgx.allowed_files.python3 = "file:/usr/lib/python3"
 sgx.allowed_files.pythonhome = "file:$(HOME)/.local/lib"
 # Ubuntu16.04 sgx.allowed_files.python35 = "file:/usr/lib/python3.5"
-# Ubuntu18.04 sgx.allowed_files.python36 = "file:/usr/lib/python3.6"
 sgx.allowed_files.python36 = "file:/usr/lib/python3.6"
 # Ubuntu16.04 sgx.allowed_files.python35local = "file:/usr/local/lib/python3.5"
-# Ubuntu18.04 sgx.allowed_files.python36local = "file:/usr/local/lib/python3.6"
 sgx.allowed_files.python36local = "file:/usr/local/lib/python3.6"
 
 # APT config files
