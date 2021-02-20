@@ -5,7 +5,7 @@ Ubuntu18.04, Docker and GrapheneSGX
 #### Before we go
 We build this sample in docker container, and we assume you had installed the graphene sgx driver.
 
-Then get jail into docker container:
+Then get jailed into docker container:
 ```
 cd /path/to/same/directory/as/graphene
 docker run -it --cap-add=SYS_PTRACE --device /dev/gsgx --device /dev/sgx/enclave --security-opt seccomp=unconfined --name=tf --net=host -v $PWD:/app -w /app  ubuntu:18.04 bash
